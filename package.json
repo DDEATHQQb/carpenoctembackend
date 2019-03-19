@@ -5,13 +5,17 @@
   "dependencies": {
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "react-scripts": "2.1.8"
+    "react-scripts": "2.1.8",
+    "express": "^4.16.4",
+    "pug": "^2.0.3",
+    "socket.io": "^2.2.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "nodemon app",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server-start" : "node server.js && npm start"
   },
   "eslintConfig": {
     "extends": "react-app"
