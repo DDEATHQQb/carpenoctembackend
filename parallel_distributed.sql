@@ -8,7 +8,7 @@ create table SystemUser
 (
 userId int auto_increment,
 username varchar(12) not null,
-pass_word varchar(12) not null,
+pass varchar(12) not null,
 primary key(userID)
 );
 
