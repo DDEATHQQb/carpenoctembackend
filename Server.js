@@ -105,8 +105,10 @@ io.on('connection',(socket)=>{
     //socket.on('getUnreadMsg',)
     socket.on('getGroup',(data)=>{
         const sql = 'SELECT groupId,groupName FROM GroupChat WHERE groupId in (SELECT JGgroupId FROM JoinGroup WHERE JGuserId = ?);';
-        db.query(sql,data.JGuserId,(error,result)=>{
+        console.log(data);
+        db.query(sql,data.userId,(error,result)=>{
             if(error) throw error ;
+            console.log(result);
             socket.emit('getGroupSuccess',result);
         });
     });
