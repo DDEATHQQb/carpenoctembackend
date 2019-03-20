@@ -71,8 +71,10 @@ insert into ChatLog
 values
 	('Hello World', '2019-03-02 20:45:20'),
     ('Eiei', '2019-03-03 11:50:13'),
-    ('Algorithm Design so fun', '2019-03-05 04:04:00');
-    
+    ('Algorithm Design so fun', '2019-03-05 04:04:00'),
+    ('Parallel so ez','2019-03-05 04:04:00'),
+    ('Parallel1 so ez','2019-03-05 05:14:00'),
+    ('Parallel2 so ez','2019-03-05 06:24:00');
 
 insert into JoinGroup
 	(JGuserId, JGgroupId, isExit, latestTimeRead)
@@ -88,5 +90,8 @@ insert into Chat
 values
 	(1, 1, 2),
     (2, 2, 3),
-    (3, 2, 1)
+    (3, 2, 1),
+    (2, 1, 4),
+    (1, 1, 5),
+    (2, 1, 6);
     
