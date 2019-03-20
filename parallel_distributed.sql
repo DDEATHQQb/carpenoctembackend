@@ -15,7 +15,7 @@ primary key(userID)
 create table GroupChat
 (
 groupId int auto_increment,
-groupName varchar(15) not null,
+groupName varchar(20) not null,
 primary key(groupId)
 );
 
@@ -48,3 +48,17 @@ foreign key(userId) references SystemUser(userId) on delete cascade on update ca
 foreign key(groupId) references GroupChat(groupId) on delete cascade on update cascade,
 foreign key(messageId) references ChatLog(messageId) on delete cascade on update cascade
 );
+
+
+insert into SystemUser
+	(username, pass)
+values
+	('oak123', '123456789'),
+    ('nook123', '123456789'),
+    ('earth123', '123456789');
+    
+    
+insert into GroupChat
+	(groupName)
+values
+	('Dream Team');
