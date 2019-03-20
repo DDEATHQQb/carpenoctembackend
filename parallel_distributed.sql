@@ -34,8 +34,8 @@ JGgroupId int,
 isExit enum('0', '1'),
 latestTimeRead timestamp not null,
 primary key(JGuserId, JGgroupId),
-foreign key(JGuserId) references SystemUser(userId) on delete cascade on update cascade,
-foreign key(JGgroupId) references GroupChat(groupId) on delete cascade on update cascade
+foreign key(JGuserId) references SystemUser(userId)  on update cascade,
+foreign key(JGgroupId) references GroupChat(groupId)  on update cascade
 );
 
 create table Chat
@@ -44,9 +44,9 @@ ChatuserId int,
 ChatgroupId int,
 ChatmessageId int,
 primary key(ChatuserId, ChatgroupId, ChatmessageId),
-foreign key(ChatuserId) references SystemUser(userId) on delete cascade on update cascade,
-foreign key(ChatgroupId) references GroupChat(groupId) on delete cascade on update cascade,
-foreign key(ChatmessageId) references ChatLog(messageId) on delete cascade on update cascade
+foreign key(ChatuserId) references SystemUser(userId) on update cascade,
+foreign key(ChatgroupId) references GroupChat(groupId) on update cascade,
+foreign key(ChatmessageId) references ChatLog(messageId) on update cascade
 );
 
 
@@ -69,18 +69,18 @@ values
 insert into ChatLog
 	(message, timeSend)
 values
-	('Hello World', '2019-03-12'),
-    ('Eiei', '2019-02-10'),
-    ('Algorithm Design so fun', '2019-03-19');
+	('Hello World', '2019-03-02 20:45:20'),
+    ('Eiei', '2019-03-03 11:50:13'),
+    ('Algorithm Design so fun', '2019-03-05 04:04:00');
     
 
 insert into JoinGroup
 	(JGuserId, JGgroupId, isExit, latestTimeRead)
 values
-	(1, 1, '1', '2019-03-01'),
-    (2, 2, '1', '2019-03-02'),
-    (2, 1, '0', '2019-02-03'),
-    (3, 1, '1', '2019-03-20');
+	(1, 1, '1', '2019-03-01 21:00:45'),
+    (2, 2, '1', '2019-03-02 20:15:20'),
+    (2, 1, '0', '2019-03-03 11:30:13'),
+    (3, 1, '1', '2019-03-05 03:04:00');
     
     
 insert into Chat
@@ -88,5 +88,5 @@ insert into Chat
 values
 	(1, 1, 2),
     (2, 2, 3),
-    (3, 2, 1),
+    (3, 2, 1)
     

@@ -1,0 +1,9 @@
+
+# SendMsg
+SELECT * FROM Chatlog;
+SELECT * FROM Chat;
+SELECT message FROM ChatLog WHERE messageId in (SELECT ChatmessageId FROM Chat WHERE ChatuserId = 1  and ChatgroupId = 1);
+SELECT timeSend FROM ChatLog WHERE messageId = LAST_INSERT_ID();
+
+# LeaveGroup
+DELETE FROM JoinGroup WHERE JGuserId=? and JGgroupId=?

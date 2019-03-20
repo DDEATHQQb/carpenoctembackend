@@ -94,34 +94,55 @@ io.on('connection',(socket)=>{
     //already in group just enter group
     //isExit = 0 >> Enter GroupChat page
     socket.on('EnterGroup',(data)=>{
-        const sql = 'UPDATE JoinGroup SET isExit=0 WHERE userId=? and groupId=?;';
-        const loadMsg = 'SELECT message FROM ChatLog WHERE messageId in (SELECT messageId FROM Chat WHERE userId = ? and groupId = ?);';
-        db.query(sql,[data.groupId,data.userId],(error)=>{
+        const sql = 'UPDATE JoinGroup SET isExit=0 WHERE JGuserId=? and JGgroupId=?;';
+        const loadMsg = 'SELECT message FROM ChatLog WHERE messageId in (SELECT messageId FROM Chat WHERE ChatuserId = ? and ChatgroupId = ?);';
+        db.query(sql,[data.ChatgroupId,data.ChatuserId],(error)=>{
             
         })
     });
+    //just exit a group
+    socket.on('ExitGroup',(data)=>{
+        const sql = 'UPDATE JoinGroup SET isExit=1 and latestTimeRead=now() WHERE JGuserId=? and JGgroupId=?;';
+        db.query(sql,[data.JGuserId,data.JGgroupId],(error)=>{
+            if(error) throw error ;
+            socket.on('ExitGroupSuccess');
+        });
+    });
     // never join group
     socket.on('JoinGroup',(data)=>{
-        const sql = 'INSERT INTO JoinGroup(userId,groupID,isExit,latestTimeRead) VALUES(?,?,0,0);'
+        const sql = 'INSERT INTO JoinGroup(JGuserId,JGgroupID,isExit,latestTimeRead) VALUES(?,?,0,0);'
         const loadMsg = 'SELECT * FROM '
-        db.query(sql,[data.groupId,data.userId],(error)=>{
+        let msg = [];
+        db.query(sql,[data.JGuserId,data.JGgroupId],(error)=>{
+            if(error)throw error;
             socket.emit('JoinGroupSuccess');
+            
         });
 
     });
     
     socket.on('LeaveGroup',(data)=>{
-        
-        
+        const sql = 'DELETE FROM JoinGroup WHERE JGuserId=? and JGgroupId=?'
+        db.query(sql,[data.JGuserId,data.JGgroupId],(error)=>{
+            if(error) throw error ;
+        });
     });
 
     socket.on('SendMsg',(data)=>{
-        const sql1 = 'SELECT messageId,message FROM Chat inner join ChatLog'
-        const sql = 'INSERT INTO ChatLog(message,timeSend) VALUES(?,?,?);';
-        db.query(sql,[data.userId,data.groupId,data.messageId],(error)=>{
+        
+        const savemsg = 'INSERT INTO ChatLog(message,timeSend) VALUES(?,now());';
+        let sql = 'INSERT INTO Chat(ChatuserId,ChatgroupId,ChatmessageId) VALUES(?,?,LAST_INSERT_ID());';
+        db.query(savemsg,[data.message],(error)=>{
             if(error) throw error ;
-           // socket.emit('SendMsgSuccess');
-            
+            db.query(sql,[data.ChatuserId,data.ChatgroupId],(error)=>{
+                if(error) throw error ;
+                sql = 'SELECT timeSend FROM ChatLog WHERE messageId = LAST_INSERT_ID();';
+                db.query(sql,(error,result)=>{
+                    socket.emit('SendMsgSuccess',result[0]);
+
+                });    
+                
+            })
         });
     });
 });
