@@ -61,4 +61,32 @@ values
 insert into GroupChat
 	(groupName)
 values
-	('Dream Team');
+	('Dream Team'),
+    ('Road To Conqueror'),
+    ('Drinking for your life');
+    
+
+insert into ChatLog
+	(message, timeSend)
+values
+	('Hello World', '2019-03-12'),
+    ('Eiei', '2019-02-10'),
+    ('Algorithm Design so fun', '2019-03-19');
+    
+
+insert into JoinGroup
+	(userId, groupId, isExit, latestTimeRead)
+values
+	(1, 1, '1', '2019-03-01'),
+    (2, 2, '1', '2019-03-02'),
+    (2, 1, '0', '2019-02-03'),
+    (3, 1, '1', '2019-03-20');
+    
+    
+insert into Chat
+	(userId, groupId, messageId)
+values
+	(1, 1, 2),
+    (1, 2, 3),
+    (2, 2, 1),
+    (3, 3, 1);
