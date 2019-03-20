@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Socket.IO chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font: 13px Helvetica, Arial;
+    }
+
+    #msg {
+      background: #000;
+      padding: 3px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    #msg input {
+      border: 0;
+      padding: 10px;
+      width: 90%;
+      margin-right: .5%;
+    }
+
+    #msg button {
+      width: 9%;
+      background: rgb(130, 224, 255);
+      border: none;
+      padding: 10px;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #messages li {
+      padding: 5px 10px;
+    }
+
+    #messages li:nth-child(odd) {
+      background: #eee;
+    }
+  </style>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    $(function () {
+      var num = 0;
+      var socket = io();
+      let name = prompt("Please enter your name:", "punsa");
+      user = { name: name, password: '1234567890' }
+      socket.emit('login', user)
+      $('#msg').submit(function (e) {
+        e.preventDefault(); // prevents page reloading
+        if (num % 2 == 0) socket.emit('chat message', { text: $('#m').val(), group: 'g1' });
+        if (num % 2 == 1) socket.emit('chat message', { text: $('#m').val(), group: 'g2' });
+        num++;
+        $('#b').html('Send to g' + (num % 2 + 1));
+        $('#m').val('');
+        return false;
+      });
+      $('#cg').submit(function (e) {
+        e.preventDefault();
+        socket.emit('create group', $('#gn').val());
+        $('#gn').val('');
+      });
+      $('#joing1').submit(function (e) {
+        e.preventDefault();
+        socket.emit('join group', 'g1');
+      });
+      $('#joing2').submit(function (e) {
+        e.preventDefault();
+        socket.emit('join group', 'g2');
+      });
+      $('#leaveg1').submit(function (e) {
+        e.preventDefault();
+        socket.emit('leave group', 'g1');
+      });
+      $('#leaveg2').submit(function (e) {
+        e.preventDefault();
+        socket.emit('leave group', 'g2');
+      });
+      $('#exitGroup').submit(function (e) {
+        e.preventDefault();
+        socket.emit('exit group', { user_name: name, group_name: 'g' + (num % 2 + 1), user_id: 1, group_id: num % 2 + 1 });
+      });
+      $('#unexitGroup').submit(function (e) {
+        e.preventDefault();
+        socket.emit('unexit group', { user_id: name, group_id: num % 2 + 1 });
+      });
+      socket.on('chat message', function (msg) {
+        $('#messages').append($('<li>').text(msg));
+      });
+      socket.on('new group', function (group) {
+        $('#glist').append($('<li>').text(group))
+      });
+      socket.on('group list', function (groups) {
+        for (let i = 0; i < groups.length; i++) {
+          $('#glist').append($('<li>').text(groups[i]))
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <ul id="messages"></ul>
+  <form id="msg" action="">
+    <input id="m" autocomplete="off" /><button id="b">Send to g1</button>
+  </form>
+  <form id="cg" action="">
+    <input id="gn" autocomplete="off" /><button>Create Group</button>
+  </form>
+  <form id="joing1" action="">
+    <button>join g1</button>
+  </form>
+  <form id="joing2" action="">
+    <button>join g2</button>
+  </form>
+  <form id="leaveg1" action="">
+    <button>leave g1</button>
+  </form>
+  <form id="leaveg2" action="">
+    <button>leave g2</button>
+  </form>
+  <form id="unexitGroup" action="">
+    <button>enter group</button>
+  </form>
+  <form id="exitGroup" action="">
+    <button>exit group</button>
+  </form>
+  <h3>group list</h3>
+  <ul id="glist">
+  </ul>
+</body>
+
+</html>

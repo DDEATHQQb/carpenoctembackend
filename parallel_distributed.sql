@@ -32,7 +32,7 @@ create table JoinGroup
 userId int,
 groupId int,
 isExit enum('0', '1'),
-lastestTimeRead timestamp not null,
+latestTimeRead timestamp not null,
 primary key(userId, groupId),
 foreign key(userId) references SystemUser(userId) on delete cascade on update cascade,
 foreign key(groupId) references GroupChat(groupId) on delete cascade on update cascade
