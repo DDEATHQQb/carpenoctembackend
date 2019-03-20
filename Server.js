@@ -106,9 +106,8 @@ io.on('connection',(socket)=>{
     socket.on('getGroup',(data)=>{
         const sql = 'SELECT groupId,groupName FROM GroupChat WHERE groupId in (SELECT JGgroupId FROM JoinGroup WHERE JGuserId = ?);';
         console.log(data);
-        db.query(sql,data.userId,(error,result)=>{
+        db.query(sql,data.userID,(error,result)=>{
             if(error) throw error ;
-            console.log(result);
             socket.emit('getGroupSuccess',result);
         });
     });
