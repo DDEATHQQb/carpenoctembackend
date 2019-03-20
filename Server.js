@@ -102,15 +102,7 @@ io.on('connection',(socket)=>{
             
         })
     });
-    //socket.on('getUnreadMsg',)
-    socket.on('getGroup',(data)=>{
-        const sql = 'SELECT groupId,groupName FROM GroupChat WHERE groupId in (SELECT JGgroupId FROM JoinGroup WHERE JGuserId = ?);';
-        console.log(data);
-        db.query(sql,data.userID,(error,result)=>{
-            if(error) throw error ;
-            socket.emit('getGroupSuccess',result);
-        });
-    });
+   
     //just exit a group
     socket.on('exitGroup',(data)=>{
         const sql = 'UPDATE JoinGroup SET isExit=1 and latestTimeRead=now() WHERE JGuserId=? and JGgroupId=?;';
@@ -150,13 +142,31 @@ io.on('connection',(socket)=>{
                 if(error) throw error ;
                 sql = 'SELECT timeSend FROM ChatLog WHERE messageId = LAST_INSERT_ID();';
                 db.query(sql,(error,result)=>{
-                    socket.emit('sendMsgSuccess',result[0]);
-
+                    sql =  'SELECT groupName FROM GroupChat WHERE groupID = ?'
+                    let want = result[0];
+                    db.query(sql , data.JGgroupId,(error,result)=>{
+                        io.to(result[0]).emit('bigger-announcement', 'the tournament will start soon');
+                        socket.emit('sendMsgSuccess',want);
+                    });
+                    
+                    
                 });    
                 
             })
         });
     });
+     socket.on('getUnreadMsg',(data)=>{
+        
+     });
+     socket.on('getGroup',(data)=>{
+        const sql = 'SELECT groupId,groupName FROM GroupChat WHERE groupId in (SELECT JGgroupId FROM JoinGroup WHERE JGuserId = ?);';
+        console.log(data);
+        db.query(sql,data.userID,(error,result)=>{
+            if(error) throw error ;
+            socket.emit('getGroupSuccess',result);
+        });
+    });
+
 });
 
 

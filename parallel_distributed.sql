@@ -6,7 +6,7 @@ use parallel_distributed;
 
 create table SystemUser
 (
-userId int auto_increment,
+userID int auto_increment,
 username varchar(12) not null,
 pass varchar(12) not null,
 primary key(userID)
@@ -14,39 +14,39 @@ primary key(userID)
 
 create table GroupChat
 (
-groupId int auto_increment,
+groupID int auto_increment,
 groupName varchar(40) not null,
-primary key(groupId)
+primary key(groupID)
 );
 
 create table ChatLog
 (
-messageId int auto_increment,
+messageID int auto_increment,
 message varchar(100) not null,
 timeSend timestamp not null,
-primary key(messageId) 
+primary key(messageID) 
 );
 
 create table JoinGroup
 (
-JGuserId int,
-JGgroupId int,
+JGuserID int,
+JGgroupID int,
 isExit enum('0', '1'),
 latestTimeRead timestamp not null,
-primary key(JGuserId, JGgroupId),
-foreign key(JGuserId) references SystemUser(userId)  on update cascade,
-foreign key(JGgroupId) references GroupChat(groupId)  on update cascade
+primary key(JGuserID, JGgroupID),
+foreign key(JGuserID) references SystemUser(userID)  on update cascade,
+foreign key(JGgroupID) references GroupChat(groupID)  on update cascade
 );
 
 create table Chat
 (
-ChatuserId int,
-ChatgroupId int,
-ChatmessageId int,
-primary key(ChatuserId, ChatgroupId, ChatmessageId),
-foreign key(ChatuserId) references SystemUser(userId) on update cascade,
-foreign key(ChatgroupId) references GroupChat(groupId) on update cascade,
-foreign key(ChatmessageId) references ChatLog(messageId) on update cascade
+ChatuserID int,
+ChatgroupID int,
+ChatmessageID int,
+primary key(ChatuserID, ChatgroupID, ChatmessageID),
+foreign key(ChatuserID) references SystemUser(userID) on update cascade,
+foreign key(ChatgroupID) references GroupChat(groupID) on update cascade,
+foreign key(ChatmessageID) references ChatLog(messageID) on update cascade
 );
 
 
@@ -77,7 +77,7 @@ values
     ('Parallel2 so ez','2019-03-05 06:24:00');
 
 insert into JoinGroup
-	(JGuserId, JGgroupId, isExit, latestTimeRead)
+	(JGuserID, JGgroupID, isExit, latestTimeRead)
 values
 	(1, 1, '1', '2019-03-01 21:00:45'),
     (1, 2, '0' ,'2019-04-03 10:00:00'),
@@ -87,7 +87,7 @@ values
     
     
 insert into Chat
-	(ChatuserId, ChatgroupId, ChatmessageId)
+	(ChatuserID, ChatgroupID, ChatmessageID)
 values
 	(1, 1, 2),
     (2, 2, 3),
