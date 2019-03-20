@@ -24,7 +24,7 @@ create table ChatLog
 messageId int auto_increment,
 message varchar(100) not null,
 timeSend timestamp not null,
-primary key(messageId)
+primary key(messageId) 
 );
 
 create table JoinGroup
