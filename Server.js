@@ -95,7 +95,8 @@ io.on('connection',(socket)=>{
     //isExit = 0 >> Enter GroupChat page
     socket.on('enterGroup',(data)=>{
         const sql = 'UPDATE JoinGroup SET isExit=0 WHERE JGuserId=? and JGgroupId=?;';
-        const loadMsg = 'SELECT message FROM ChatLog WHERE messageId in (SELECT ChatmessageId FROM Chat WHERE  ChatgroupId = ?);';
+        const loadMsg = 'SELECT message FROM ChatLog WHERE messageId in (SELECT ChatmessageId \
+            FROM Chat WHERE  ChatgroupId = ?);';
         db.query(sql,[data.ChatuserId,data.ChatgroupId],(error)=>{
             if(error) throw error ;
             db.query(loadMsg,data.ChatgroupId)
@@ -114,7 +115,8 @@ io.on('connection',(socket)=>{
     // never join group
     socket.on('joinGroup',(data)=>{
         const sql = 'INSERT INTO JoinGroup(JGuserId, JGgroupID, isExit, latestTimeRead) VALUES(?,?,0,now());'
-        const loadMsg = 'SELECT message,timeSend FROM ChatLog WHERE messageId in (SELECT ChatmessageId FROM Chat WHERE ChatgroupId = ?);'
+        const loadMsg = 'SELECT message,timeSend FROM ChatLog WHERE messageId in \
+        (SELECT ChatmessageId FROM Chat WHERE ChatgroupId = ?);'
         let msg = [];
         db.query(sql,[data.JGuserId,data.JGgroupId],(error)=>{
             if(error)throw error;
@@ -145,6 +147,7 @@ io.on('connection',(socket)=>{
                     sql =  'SELECT groupName FROM GroupChat WHERE groupID = ?'
                     const want = result[0];
                     db.query(sql , data.JGgroupId,(error,result)=>{
+                        console.log(want+'\n'+result);
                         io.to(result[0]).emit('bigger-announcement', 'the tournament will start soon');//send to group
                         socket.emit('sendMsgSuccess',want);// send timestamp to frontend
                     });
@@ -155,23 +158,38 @@ io.on('connection',(socket)=>{
             })
         });
     });
+
      socket.on('getUnreadMsg',(data)=>{
         const loadMsg = 'SELECT message,timeSend \
         FROM ChatLog INNER JOIN Chat INNER JOIN JoinGroup \
         ON ChatmessageID = messageID  AND ChatuserID = JGuserID AND ChatgroupID = JGgroupID \
         AND ChatgroupID = ? AND ChatuserID = ? \
         WHERE latestTimeRead <= timeSend;';
+        console.log(data);
         db.query(loadMsg,[data.ChatuserID,data.ChatgroupId],(error,result)=>{
             if(error) throw error ;
+            console.log(result);
             socket.emit(result);
         });
      });
+
      socket.on('getGroup',(data)=>{
-        const sql = 'SELECT groupId,groupName FROM GroupChat WHERE groupId in (SELECT JGgroupId FROM JoinGroup WHERE JGuserId = ?);';
+        const sql = 'SELECT groupId,groupName FROM GroupChat \
+        WHERE groupId IN (SELECT JGgroupId FROM JoinGroup WHERE JGuserId = ?);';
         console.log(data);
         db.query(sql,data.userID,(error,result)=>{
             if(error) throw error ;
+            console.log(result);
             socket.emit('getGroupSuccess',result);
+        });
+    });
+    socket.on('getOtherGroup',(data)=>{
+        const sql = 'SELECT groupId,groupName FROM GroupChat \
+        WHERE groupId NOT IN (SELECT JGgroupId FROM JoinGroup WHERE JGuserId = ?);';
+        db.query(sql,data.userID,(error,result)=>{
+            if(error) throw error ;
+            console.log(result);
+            socket.emit('getOtherGroupSuccess',result);
         });
     });
 
