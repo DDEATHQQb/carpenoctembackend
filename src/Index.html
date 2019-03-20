@@ -70,7 +70,7 @@
       });
       $('#cg').submit(function (e) {
         e.preventDefault();
-        socket.emit('create group', $('#gn').val());
+        socket.emit('CreateGroup', $('#gn').val());
         $('#gn').val('');
       });
       $('#joing1').submit(function (e) {

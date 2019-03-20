@@ -41,7 +41,7 @@ io.on('connection',(socket)=>{
         socket.send('Sent a message 5 seconds after connection!');
     },5000);
 
-    const checkIfExist = 'SELECT username,pass_word FROM SystemUser WHERE username = ?;';
+    //const checkIfExist = 'SELECT username,pass_word FROM SystemUser WHERE username = ?;';
     // socket.on('register',(req,res)=>{
     //     db.query(checkIfExist,[req.username],(error,result)=>{
     //         if(error)throw error;
@@ -56,18 +56,23 @@ io.on('connection',(socket)=>{
     //         }
     //     });
     // });
-    socket.on('login',(data)=>{
-        const checkIfExist = 'SELECT username,pass_word FROM SystemUser WHERE username = ? and pass = ?;';
-        db.query(checkIfExist,[data.username,data.password],(error,result)=>{
-            if(error)throw error ;
-            // cannot find username in database
-            if(result.length==0){
-                socket.emit('loginFail');
-            }else {
-                socket.emit('loginSuccess');
-            }
-        })
-    });
+    socket.on("login", data => {
+        console.log("enter back-end login");
+        console.log(data.username);
+        console.log(data.password);
+        const checkIfExist =
+          "SELECT userID FROM SystemUser WHERE username = ? and pass = ?;";
+        db.query(checkIfExist, [data.username, data.password], (error, result) => {
+          if (error) throw error;
+          // cannot find username in database
+          if (result.length == 0) {
+            socket.emit("loginFail");
+          } else {
+            console.log(result[0].userID);
+            socket.emit("loginSuccess", result[0]);
+          }
+        });
+      });
     socket.on('CreateGroup',(data)=>{
         const checkIfExist = 'SELECT groupName FROM GroupChat WHERE groupName = ?;';
         db.query(checkIfExist,data.groupName,(error,result)=>{
@@ -111,7 +116,8 @@ io.on('connection',(socket)=>{
     });
 
     socket.on('SendMsg',(data)=>{
-        const sql = 'INSERT INTO Chat(userId,groupId,messageId) VALUES(?,?,?);';
+        const sql1 = 'SELECT messageId,message FROM Chat inner join ChatLog'
+        const sql = 'INSERT INTO ChatLog(message,timeSend) VALUES(?,?,?);';
         db.query(sql,[data.userId,data.groupId,data.messageId],(error)=>{
             if(error) throw error ;
            // socket.emit('SendMsgSuccess');
