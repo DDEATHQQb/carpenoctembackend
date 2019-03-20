@@ -2,8 +2,22 @@
 # SendMsg
 SELECT * FROM Chatlog;
 SELECT * FROM Chat;
-SELECT message FROM ChatLog WHERE messageId in (SELECT ChatmessageId FROM Chat WHERE ChatuserId = 1  and ChatgroupId = 1);
+INSERT INTO ChatLog(message,timeSend) VALUES(?,now());
+INSERT INTO Chat(ChatuserId,ChatgroupId,ChatmessageId) VALUES(?,?,LAST_INSERT_ID());
 SELECT timeSend FROM ChatLog WHERE messageId = LAST_INSERT_ID();
+SELECT groupName FROM GroupChat WHERE groupID = ?
+
 
 # LeaveGroup
 DELETE FROM JoinGroup WHERE JGuserId=? and JGgroupId=?
+
+# getUnreadMsg
+select * from ChatLog ;
+select * from Chat;
+select * from ChatLog INNER JOIN Chat INNER JOIN JoinGroup;
+SELECT message,timeSend FROM ChatLog WHERE messageId in (SELECT ChatmessageId FROM Chat WHERE ChatgroupId = 1);
+'SELECT message,timeSend \
+        FROM ChatLog INNER JOIN Chat INNER JOIN JoinGroup \
+        ON ChatmessageID = messageID  AND ChatuserID = JGuserID AND ChatgroupID = JGgroupID \
+        AND ChatgroupID = ? AND ChatuserID = ? \
+        WHERE latestTimeRead <= timeSend;'
