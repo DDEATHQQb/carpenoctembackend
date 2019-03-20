@@ -56,7 +56,7 @@ io.on('connection',(socket)=>{
     //         }
     //     });
     // });
-    socket.on("login", data => {
+    socket.on("login", (data) => {
         console.log("enter back-end login");
         console.log(data.username);
         console.log(data.password);
@@ -77,7 +77,7 @@ io.on('connection',(socket)=>{
         const checkIfExist = 'SELECT groupName FROM GroupChat WHERE groupName = ?;';
         db.query(checkIfExist,data.groupName,(error,result)=>{
             if(error)throw error ;
-            if(result.length==0){
+            if(result.length!=0){
                 socket.emit('createGroupFail');
             }else {
                 let sql = 'INSERT INTO GroupChat(groupName) VALUES(?);'
@@ -98,7 +98,7 @@ io.on('connection',(socket)=>{
         const loadMsg = 'SELECT message FROM ChatLog WHERE messageId in (SELECT ChatmessageId FROM Chat WHERE  ChatgroupId = ?);';
         db.query(sql,[data.ChatuserId,data.ChatgroupId],(error)=>{
             if(error) throw error ;
-            db.query(loadMsg,[data.ChatgroupId])
+            db.query(loadMsg,data.ChatgroupId)
             
         })
     });
