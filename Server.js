@@ -114,8 +114,8 @@ io.on('connection',(socket)=>{
         const sql = 'INSERT INTO Chat(userId,groupId,messageId) VALUES(?,?,?);';
         db.query(sql,[data.userId,data.groupId,data.messageId],(error)=>{
             if(error) throw error ;
-            socket.emit('SendMsgSuccess');
-
+           // socket.emit('SendMsgSuccess');
+            
         });
     });
 });

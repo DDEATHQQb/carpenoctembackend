@@ -15,7 +15,7 @@ primary key(userID)
 create table GroupChat
 (
 groupId int auto_increment,
-groupName varchar(20) not null,
+groupName varchar(40) not null,
 primary key(groupId)
 );
 
@@ -29,24 +29,24 @@ primary key(messageId)
 
 create table JoinGroup
 (
-userId int,
-groupId int,
+JGuserId int,
+JGgroupId int,
 isExit enum('0', '1'),
 latestTimeRead timestamp not null,
-primary key(userId, groupId),
-foreign key(userId) references SystemUser(userId) on delete cascade on update cascade,
-foreign key(groupId) references GroupChat(groupId) on delete cascade on update cascade
+primary key(JGuserId, JGgroupId),
+foreign key(JGuserId) references SystemUser(userId) on delete cascade on update cascade,
+foreign key(JGgroupId) references GroupChat(groupId) on delete cascade on update cascade
 );
 
 create table Chat
 (
-userId int,
-groupId int,
-messageId int,
-primary key(userId, groupId, messageId),
-foreign key(userId) references SystemUser(userId) on delete cascade on update cascade,
-foreign key(groupId) references GroupChat(groupId) on delete cascade on update cascade,
-foreign key(messageId) references ChatLog(messageId) on delete cascade on update cascade
+ChatuserId int,
+ChatgroupId int,
+ChatmessageId int,
+primary key(ChatuserId, ChatgroupId, ChatmessageId),
+foreign key(ChatuserId) references SystemUser(userId) on delete cascade on update cascade,
+foreign key(ChatgroupId) references GroupChat(groupId) on delete cascade on update cascade,
+foreign key(ChatmessageId) references ChatLog(messageId) on delete cascade on update cascade
 );
 
 
@@ -63,8 +63,8 @@ insert into GroupChat
 values
 	('Dream Team'),
     ('Road To Conqueror'),
-    ('Drinking for your life');
-    
+    ('Drinking'),
+    ('DPLOP');
 
 insert into ChatLog
 	(message, timeSend)
@@ -75,7 +75,7 @@ values
     
 
 insert into JoinGroup
-	(userId, groupId, isExit, latestTimeRead)
+	(JGuserId, JGgroupId, isExit, latestTimeRead)
 values
 	(1, 1, '1', '2019-03-01'),
     (2, 2, '1', '2019-03-02'),
@@ -84,9 +84,9 @@ values
     
     
 insert into Chat
-	(userId, groupId, messageId)
+	(ChatuserId, ChatgroupId, ChatmessageId)
 values
 	(1, 1, 2),
-    (1, 2, 3),
-    (2, 2, 1),
-    (3, 3, 1);
+    (2, 2, 3),
+    (3, 2, 1),
+    
