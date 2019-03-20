@@ -102,6 +102,13 @@ io.on('connection',(socket)=>{
             
         })
     });
+    socket.on('getGroup',(data)=>{
+        const sql = 'SELECT groupName FROM GroupChat WHERE groupId in (SELECT JGgroupId FROM JoinGroup WHERE JGuserId = ?);';
+        db.query(sql,data.JGuserId,(error,result)=>{
+            if(error) throw error ;
+            socket.emit('getGroupSuccess',result);
+        });
+    });
     //just exit a group
     socket.on('exitGroup',(data)=>{
         const sql = 'UPDATE JoinGroup SET isExit=1 and latestTimeRead=now() WHERE JGuserId=? and JGgroupId=?;';
