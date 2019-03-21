@@ -5,6 +5,7 @@ const port = 8081;
 const port2 = 8080;
 const mysql = require("mysql");
 const moment = require("moment");
+
 //const http = require('http').Server(app);
 // connect server
 const server = app.listen(port, "0.0.0.0", () => {
@@ -97,6 +98,7 @@ io.on("connection", socket => {
   //already in group just enter group
   //isExit = 0 >> Enter GroupChat page
   socket.on("enterGroup", data => {
+    let output = [];
     console.log("enter group");
     const sql =
       "UPDATE JoinGroup SET isExit='0' WHERE JGuserID=? AND JGgroupID=?;";
@@ -108,28 +110,30 @@ io.on("connection", socket => {
       db.query(loadMsg, data.groupID, (error, result) => {
         if (error) throw error;
         // console.log("here");
-        console.log(result.timeSend);
+
+        for (i = 0; i < result.length; i++) {
+          result[i].timeSend = result[i].timeSend.toLocaleString();
+        }
+
         console.log(result);
         socket.emit("enterGroupSuccess", result);
       });
     });
   });
-  
+
   //just exit a group
   socket.on("exitGroup", data => {
-    
     const sql =
-      "UPDATE JoinGroup SET isExit=1 and latestTimeRead=now() WHERE JGuserID=? and JGgroupID=?;";
-    db.query(sql, [data.JGuserID, data.JGgroupID], error => {
+      "UPDATE JoinGroup SET isExit='1' and latestTimeRead=now() WHERE JGuserID=? and JGgroupID=?;";
+    db.query(sql, [data.userID, data.groupID], error => {
       if (error) throw error;
       socket.on("exitGroupSuccess");
     });
   });
   // never join group
   socket.on("joinGroup", data => {
-    let timeStamp = new Date().toLocaleString();
     const sql =
-      `INSERT INTO JoinGroup(JGuserID, JGgroupID, isExit, latestTimeRead) VALUES(?,?,'0',${timeStamp});`;
+      "INSERT INTO JoinGroup(JGuserID, JGgroupID, isExit, latestTimeRead) VALUES(?,?,'0',now());";
     const loadMsg =
       "SELECT ChatuserID,message,timeSend FROM  Chat INNER JOIN ChatLog \
     ON ChatmessageID = messageID WHERE ChatgroupID = ?;";
@@ -186,7 +190,7 @@ io.on("connection", socket => {
 
   socket.on("getUnreadMsg", data => {
     const loadMsg =
-      "SELECT latestTimeRead \
+      "SELECT message,timeSend \
         FROM ChatLog INNER JOIN Chat INNER JOIN JoinGroup \
         ON ChatmessageID = messageID  AND ChatuserID = JGuserID AND ChatgroupID = JGgroupID \
         AND ChatgroupID = ? AND ChatuserID = ? \
