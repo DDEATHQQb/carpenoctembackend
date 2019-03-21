@@ -90,10 +90,14 @@ io.on("connection", socket => {
         let sql = "INSERT INTO GroupChat(groupName) VALUES(?);";
         db.query(sql, data.groupName, error => {
           if (error) throw error;
-          socket.emit("groupCreated");
+          socket.emit("createGroupSuccess");
         });
       }
     });
+  });
+
+  socket.on("refreshGroup", data => {
+    io.emit("refreshGroupSuccess");
   });
   //already in group just enter group
   //isExit = 0 >> Enter GroupChat page
