@@ -186,7 +186,7 @@ io.on("connection", socket => {
 
   socket.on("getUnreadMsg", data => {
     const loadMsg =
-      "SELECT message,timeSend \
+      "SELECT latestTimeRead \
         FROM ChatLog INNER JOIN Chat INNER JOIN JoinGroup \
         ON ChatmessageID = messageID  AND ChatuserID = JGuserID AND ChatgroupID = JGgroupID \
         AND ChatgroupID = ? AND ChatuserID = ? \
