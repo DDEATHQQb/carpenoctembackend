@@ -91,14 +91,20 @@ io.on("connection", socket => {
   //already in group just enter group
   //isExit = 0 >> Enter GroupChat page
   socket.on("enterGroup", data => {
+    console.log("enter group");
     const sql =
-      "UPDATE JoinGroup SET isExit=0 WHERE JGuserId=? and JGgroupId=?;";
+      "UPDATE JoinGroup SET isExit='0' WHERE JGuserId=? and JGgroupId=?;";
     const loadMsg =
-      "SELECT message FROM ChatLog WHERE messageId in (SELECT ChatmessageId \
+      "SELECT message,timeSend FROM ChatLog WHERE messageId in (SELECT ChatmessageId \
             FROM Chat WHERE  ChatgroupId = ?);";
-    db.query(sql, [data.ChatuserId, data.ChatgroupId], error => {
+    db.query(sql, [data.userID, data.groupID], error => {
       if (error) throw error;
-      db.query(loadMsg, data.ChatgroupId);
+      db.query(loadMsg, data.groupID, (error, result) => {
+        if (error) throw error;
+        // console.log("here");
+        console.log(result);
+        socket.emit("enterGroupSuccess", result);
+      });
     });
   });
 
@@ -124,8 +130,10 @@ io.on("connection", socket => {
         console.log("error here");
         throw error;
       }
-      db.query(loadMsg, data.userID, (error, result) => {
+      db.query(loadMsg, data.groupID, (error, result) => {
         if (error) throw error;
+        // console.log("here");
+        // console.log(result);
         socket.emit("joinGroupSuccess", result);
       });
     });
@@ -183,10 +191,10 @@ io.on("connection", socket => {
     const sql =
       "SELECT groupId,groupName FROM GroupChat \
         WHERE groupId IN (SELECT JGgroupId FROM JoinGroup WHERE JGuserId = ?);";
-    console.log(data);
+    //console.log(data);
     db.query(sql, data.userID, (error, result) => {
       if (error) throw error;
-      console.log(result);
+      //console.log(result);
       socket.emit("getGroupSuccess", result);
     });
   });
@@ -196,7 +204,7 @@ io.on("connection", socket => {
         WHERE groupId NOT IN (SELECT JGgroupId FROM JoinGroup WHERE JGuserId = ?);";
     db.query(sql, data.userID, (error, result) => {
       if (error) throw error;
-      console.log(result);
+      //console.log(result);
       socket.emit("getOtherGroupSuccess", result);
     });
   });
