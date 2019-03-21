@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const port = 8081;
-const port2 = 8080 ;
+const port2 = 8080;
 const mysql = require("mysql");
 //const http = require('http').Server(app);
 // connect server
@@ -96,8 +96,8 @@ io.on("connection", socket => {
     const sql =
       "UPDATE JoinGroup SET isExit='0' WHERE JGuserID=? AND JGgroupID=?;";
     const loadMsg =
-    "SELECT ChatuserID,message,timeSend FROM  Chat INNER JOIN ChatLog \
-    ON ChatmessageID = messageID WHERE ChatgroupID = ?;" ;
+      "SELECT ChatuserID,message,timeSend FROM  Chat INNER JOIN ChatLog \
+    ON ChatmessageID = messageID WHERE ChatgroupID = ?;";
     db.query(sql, [data.userID, data.groupID], error => {
       if (error) throw error;
       db.query(loadMsg, data.groupID, (error, result) => {
@@ -120,13 +120,12 @@ io.on("connection", socket => {
   });
   // never join group
   socket.on("joinGroup", data => {
-    
     const sql =
       "INSERT INTO JoinGroup(JGuserID, JGgroupID, isExit, latestTimeRead) VALUES(?,?,'0',now());";
     const loadMsg =
-    "SELECT ChatuserID,message,timeSend FROM  Chat INNER JOIN ChatLog \
-    ON ChatmessageID = messageID WHERE ChatgroupID = ?;" ;
-   
+      "SELECT ChatuserID,message,timeSend FROM  Chat INNER JOIN ChatLog \
+    ON ChatmessageID = messageID WHERE ChatgroupID = ?;";
+
     db.query(sql, [data.userID, data.groupID], error => {
       if (error) {
         console.log("error here");
@@ -148,24 +147,30 @@ io.on("connection", socket => {
     });
   });
 
-  socket.on("sendMsg", (data) => {
-    let timeStamp = now() ;
+  socket.on("sendMsg", data => {
+    console.log("time");
+    let timeStamp = new Date().toLocaleString();
+    console.log(timeStamp);
 
-    const savemsg = `INSERT INTO ChatLog(message,timeSend) VALUES(?,${timeStamp});`;
-    let sql ="INSERT INTO Chat(ChatuserID,ChatgroupID,ChatmessageID) \
+    const savemsg = `INSERT INTO ChatLog(message,timeSend) VALUES(?,?);`;
+    let sql =
+      "INSERT INTO Chat(ChatuserID,ChatgroupID,ChatmessageID) \
       VALUES(?,?,LAST_INSERT_ID());";
     // save message into chatlog table
-    let msg = {userID : data.userID ,
-              groupID : data.groupID, 
-              timeSend : timeStamp, 
-              message : data.message
-            };
-    db.query(savemsg, [data.message], error => {
+    let msg = {
+      userID: data.userID,
+      groupID: data.groupID,
+      timeSend: timeStamp,
+      message: data.content
+    };
+
+    console.log(data.content);
+    db.query(savemsg, [data.content, timeStamp], error => {
       if (error) throw error;
       // insert chatmessage into chat table
       db.query(sql, [data.userID, data.groupID], error => {
         if (error) throw error;
-        io.emit('sendMsgToEveryone',msg); //send to group
+        io.emit("sendMsgToEveryone", msg); //send to group
       });
     });
   });
