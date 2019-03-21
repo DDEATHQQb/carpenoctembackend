@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const port = 8081;
+const port2 = 8080 ;
 const mysql = require("mysql");
 //const http = require('http').Server(app);
 // connect server
@@ -119,6 +120,7 @@ io.on("connection", socket => {
   });
   // never join group
   socket.on("joinGroup", data => {
+    
     const sql =
       "INSERT INTO JoinGroup(JGuserID, JGgroupID, isExit, latestTimeRead) VALUES(?,?,'0',now());";
     const loadMsg =
@@ -153,7 +155,8 @@ io.on("connection", socket => {
     let sql ="INSERT INTO Chat(ChatuserID,ChatgroupID,ChatmessageID) \
       VALUES(?,?,LAST_INSERT_ID());";
     // save message into chatlog table
-    let want = {userID : data.userID ,
+    let msg = {userID : data.userID ,
+              groupID : data.groupID, 
               timeSend : timeStamp, 
               message : data.message
             };
@@ -162,7 +165,7 @@ io.on("connection", socket => {
       // insert chatmessage into chat table
       db.query(sql, [data.userID, data.groupID], error => {
         if (error) throw error;
-        io.to(data.groupID).emit('sendMsgToEveryone',want); //send to group
+        io.emit('sendMsgToEveryone',msg); //send to group
       });
     });
   });
