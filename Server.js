@@ -104,7 +104,7 @@ io.on("connection", socket => {
       "UPDATE JoinGroup SET isExit='0' WHERE JGuserID=? AND JGgroupID=?;";
     const loadMsg =
       "SELECT ChatuserID,message,timeSend FROM  Chat INNER JOIN ChatLog \
-    ON ChatmessageID = messageID WHERE ChatgroupID = ?;";
+    ON ChatmessageID = messageID WHERE ChatgroupID = ? ORDER BY timeSend;";
     db.query(sql, [data.userID, data.groupID], error => {
       if (error) throw error;
       db.query(loadMsg, data.groupID, (error, result) => {
