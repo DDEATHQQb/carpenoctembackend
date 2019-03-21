@@ -53,9 +53,9 @@ foreign key(ChatmessageID) references ChatLog(messageID) on update cascade
 insert into SystemUser
 	(username, pass)
 values
-	('oak123', '123456789'),
-    ('nook123', '123456789'),
-    ('earth123', '123456789');
+	('oak', '123'),
+    ('nook', '123'),
+    ('earth', '123');
     
     
 insert into GroupChat
