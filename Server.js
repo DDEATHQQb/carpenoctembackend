@@ -4,11 +4,16 @@ const path = require("path");
 const port = 8081;
 const port2 = 8080;
 const mysql = require("mysql");
+const moment = require("moment");
 //const http = require('http').Server(app);
 // connect server
-const server = app.listen(port, () => {
+const server = app.listen(port, "0.0.0.0", () => {
   console.log(`Listening on port: ${port}`);
 });
+
+// const server = app.listen(port, '0.0.0.0', function() {
+//     console.log(`Listening on port: ${port}`);
+// });
 const io = require("socket.io").listen(server);
 
 // call database and connect
@@ -103,6 +108,7 @@ io.on("connection", socket => {
       db.query(loadMsg, data.groupID, (error, result) => {
         if (error) throw error;
         // console.log("here");
+
         console.log(result);
         socket.emit("enterGroupSuccess", result);
       });
@@ -149,7 +155,8 @@ io.on("connection", socket => {
 
   socket.on("sendMsg", data => {
     console.log("time");
-    let timeStamp = new Date().toLocaleString();
+    let timeStamp = moment().format("YYYY-MM-DD HH:mm:ss");
+    //  let timeStamp = new Date().toLocaleString();
     console.log(timeStamp);
 
     const savemsg = `INSERT INTO ChatLog(message,timeSend) VALUES(?,?);`;
