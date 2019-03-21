@@ -16,7 +16,7 @@ select * from ChatLog ;
 select * from Chat;
 select * from ChatLog INNER JOIN Chat INNER JOIN JoinGroup;
 SELECT message,timeSend FROM ChatLog WHERE messageId in (SELECT ChatmessageId FROM Chat WHERE ChatgroupId = 1);
-'SELECT message,timeSend,latestTimeRead \
+'SELECT message,timeSend \
         FROM ChatLog INNER JOIN Chat INNER JOIN JoinGroup \
         ON ChatmessageID = messageID  AND ChatuserID = JGuserID AND ChatgroupID = JGgroupID \
         AND ChatgroupID = ? AND ChatuserID = ? \
