@@ -64,9 +64,9 @@ io.on("connection", socket => {
   //     });
   // });
   socket.on("login", data => {
-    console.log("enter back-end login");
-    console.log(data.username);
-    console.log(data.password);
+    //console.log("enter back-end login");
+    //console.log(data.username);
+    //console.log(data.password);
     const checkIfExist =
       "SELECT userID FROM SystemUser WHERE username = ? and pass = ?;";
     db.query(checkIfExist, [data.username, data.password], (error, result) => {
@@ -75,7 +75,7 @@ io.on("connection", socket => {
       if (result.length == 0) {
         socket.emit("loginFail");
       } else {
-        console.log(result[0].userID);
+        //console.log(result[0].userID);
         socket.emit("loginSuccess", result[0]);
       }
     });
@@ -97,13 +97,14 @@ io.on("connection", socket => {
   });
 
   socket.on("refreshGroup", data => {
+    //console.log("server emit refreshGroupSuccess");
     io.emit("refreshGroupSuccess");
   });
   //already in group just enter group
   //isExit = 0 >> Enter GroupChat page
   socket.on("enterGroup", data => {
     let output = [];
-    console.log("enter group");
+    //console.log("enter group");
     const sql =
       "UPDATE JoinGroup SET isExit='0' WHERE JGuserID=? AND JGgroupID=?;";
     const loadMsg =
@@ -119,7 +120,7 @@ io.on("connection", socket => {
           result[i].timeSend = result[i].timeSend.toLocaleString();
         }
 
-        console.log(result);
+        //console.log(result);
         socket.emit("enterGroupSuccess", result);
       });
     });
@@ -144,7 +145,7 @@ io.on("connection", socket => {
 
     db.query(sql, [data.userID, data.groupID], error => {
       if (error) {
-        console.log("error here");
+        //console.log("error here");
         throw error;
       }
       db.query(loadMsg, data.groupID, (error, result) => {
@@ -164,10 +165,10 @@ io.on("connection", socket => {
   });
 
   socket.on("sendMsg", data => {
-    console.log("time");
+    //console.log("time");
     //let timeStamp = moment().format("YYYY-MM-DD HH:mm:ss");
     let timeStamp = new Date().toLocaleString();
-    console.log(timeStamp);
+    //console.log(timeStamp);
 
     const savemsg = `INSERT INTO ChatLog(message,timeSend) VALUES(?,?);`;
     let sql =
@@ -181,7 +182,7 @@ io.on("connection", socket => {
       message: data.content
     };
 
-    console.log(data.content);
+    //console.log(data.content);
     db.query(savemsg, [data.content, timeStamp], error => {
       if (error) throw error;
       // insert chatmessage into chat table
@@ -199,10 +200,10 @@ io.on("connection", socket => {
         ON ChatmessageID = messageID  AND ChatuserID = JGuserID AND ChatgroupID = JGgroupID \
         AND ChatgroupID = ? AND ChatuserID = ? \
         WHERE latestTimeRead <= timeSend;";
-    console.log(data);
+    //console.log(data);
     db.query(loadMsg, [data.ChatuserID, data.ChatgroupID], (error, result) => {
       if (error) throw error;
-      console.log(result);
+      //console.log(result);
       socket.emit(result);
     });
   });
