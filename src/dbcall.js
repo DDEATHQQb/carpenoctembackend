@@ -1,7 +1,7 @@
 module.exports = {
-    host: "localhost",
-    user :"root",
-    password : "KsaDGlzq2871",
-    database : "parallel_distributed",
-    port : 3306
-}
+  host: "localhost",
+  user: "root",
+  password: "root",
+  database: "parallel_distributed",
+  port: 3306
+};

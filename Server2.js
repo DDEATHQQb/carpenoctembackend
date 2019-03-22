@@ -2,15 +2,15 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const port = 8081;
-const port2 = 8080;
+const port2 = 8082;
 
 const mysql = require("mysql");
 const moment = require("moment");
 
 //const http = require('http').Server(app);
 // connect server
-const server = app.listen(port, "0.0.0.0", () => {
-  console.log(`Listening on port: ${port}`);
+const server = app.listen(port2, "0.0.0.0", () => {
+  console.log(`Listening on port: ${port2}`);
 });
 
 // const server = app.listen(port, '0.0.0.0', function() {
