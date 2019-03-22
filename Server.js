@@ -83,9 +83,26 @@ io.on("connection", socket => {
       if (error) throw error;
       // cannot find username in database
       if (result.length == 0) {
-        socket.emit("loginFail");
+        let addUser = "INSERT INTO SystemUser(username,pass) VALUE(?,?);";
+        db.query(addUser, [data.username, data.password], (error, result) => {
+          if (error) throw error;
+
+          let getUserID =
+            "SELECT userID FROM systemUser WHERE username=? AND pass=?";
+          db.query(
+            getUserID,
+            [data.username, data.password],
+            (error, result) => {
+              if (error) throw error;
+              console.log(result[0]);
+
+              socket.emit("loginSuccess", result[0]);
+            }
+          );
+        });
       } else {
         //console.log(result[0].userID);
+        console.log(result[0]);
         socket.emit("loginSuccess", result[0]);
       }
     });
